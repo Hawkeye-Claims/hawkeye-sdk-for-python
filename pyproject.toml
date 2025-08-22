@@ -8,3 +8,7 @@ dependencies = [
     "pytest>=8.4.1",
     "requests>=2.32.4",
 ]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
