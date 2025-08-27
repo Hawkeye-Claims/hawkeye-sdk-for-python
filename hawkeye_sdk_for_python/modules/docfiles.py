@@ -1,4 +1,3 @@
-from typing import Optional
 from ..types import ClientSettings, DocType
 import requests
 
@@ -10,17 +9,17 @@ class DocfilesModule:
             self,
             filenumber: int,
             fileurl: str,
-            category: Optional[DocType] = DocType.DEFAULT,
-            visibleToClient: Optional[bool] = False,
-            notes: Optional[str] = ""
+            category: DocType = DocType.DEFAULT,
+            visibleToClient: bool = False,
+            notes: str = ""
             ):
-        requests.post(
+        response = requests.post(
             url=f"{self.client.base_url}/savefile",
             headers=self.client.headers,
-            data = {
+            json = {
                 "filenumber": filenumber,
                 "link": fileurl,
-                "category": category,
+                "category": category.value,
                 "visibleToClient": visibleToClient,
                 "notes": notes
             }

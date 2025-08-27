@@ -12,13 +12,13 @@ class LogtrailsModule:
             self, 
             file_number: int,
             activity: str,
-            date: Optional[str] = datetime.now().strftime("%m/%d/%Y")
+            date: str = datetime.now().strftime("%m/%d/%Y")
             ) -> ApiResponse:
         response = requests.post(
             url=f"{self.client.base_url}/createLogTrailEntry",
             headers=self.client.headers,
             json={
-                "file_number": file_number,
+                "filenumber": file_number,
                 "date": date,
                 "activity": activity
             }
