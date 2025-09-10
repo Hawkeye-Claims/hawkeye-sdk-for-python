@@ -13,7 +13,7 @@ class DocfilesModule:
             visibleToClient: bool = False,
             notes: str = ""
             ):
-        response = requests.post(
+        requests.post(
             url=f"{self.client.base_url}/savefile",
             headers=self.client.headers,
             json = {

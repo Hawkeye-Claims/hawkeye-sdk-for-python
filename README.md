@@ -15,13 +15,14 @@ A Python SDK for interacting with the Hawkeye Claims Management API. This SDK pr
 Install the SDK using `uv` with the GitHub repository:
 
 ```bash
-uv add git+https://github.com/yourusername/hawkeye-sdk-for-python.git
+uv add git+https://github.com/Hawkeye-Claims/hawkeye-sdk-for-python
 ```
 
 Or using pip:
 
 ```bash
-pip install git+https://github.com/yourusername/hawkeye-sdk-for-python.git
+pip install git+https://github.com/Hawkeye-Claims/hawkeye-sdk-for-python
+
 ```
 
 ## Quick Start

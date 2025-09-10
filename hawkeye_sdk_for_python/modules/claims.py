@@ -89,7 +89,7 @@ class ClaimsModule:
     ) -> ApiResponse:
         all_args = locals()
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
-        response = requests.put(
+        response = requests.post(
             url=f"{self.client.base_url}/updateclaim",
             headers=self.client.headers,
             data=data
