@@ -1,8 +1,14 @@
+[build-system]
+requires = ["setuptools >= 80.9"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "hawkeye-sdk-for-python"
 version = "1.0.0"
-description = "A Python SDK for interacting with the Hawkeye Claims Management API. This SDK provides a simple and intuitive interface for managing insurance claims, documents, and status logs.
-"
+authors = [
+    { name="Kevin Lopes", email="it@hawkeyeclaims.com" },
+]
+description = "A Python SDK for interacting with the Hawkeye Claims Management API. This SDK provides a simple and intuitive interface for managing insurance claims, documents, and status logs."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
