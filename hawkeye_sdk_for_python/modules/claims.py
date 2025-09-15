@@ -52,7 +52,7 @@ class ClaimsModule:
             vehyear: Optional[int]=None,
             vehedition: Optional[str]=None,
             vehplatenumber: Optional[str]=None,
-            vehuninumber: Optional[str]=None
+            vehunitnumber: Optional[str]=None
     ) -> ApiResponse:
         all_args = locals()
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
@@ -94,7 +94,7 @@ class ClaimsModule:
             vehcolor: Optional[str]=None,
             vehvin: Optional[str]=None,
             vehplatenumber: Optional[str]=None,
-            vehuninumber: Optional[str]=None
+            vehunitnumber: Optional[str]=None
     ) -> ApiResponse:
         all_args = locals()
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
