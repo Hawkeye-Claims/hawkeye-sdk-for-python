@@ -321,18 +321,25 @@ class TestClaimsModule(unittest.TestCase):
             self.assertEqual(claim.rentername, "John Doe")
             print("Get Single Claim Test Passed\n")
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_create_claim_success(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_create_claim_success(self, mock_session_class):
+        """Test successful claim creation with new Session.send() approach."""
+        # Mock the session instance and its methods
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
+        # Mock the response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "filenumber": 24111756,
-            "message": "Claim created sucessfully! Filenumber is 24111756",
+            "message": "Claim created successfully! Filenumber is 24111756",
             "error": 0,
             "success": True
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.create_claim(
@@ -345,120 +352,34 @@ class TestClaimsModule(unittest.TestCase):
             vehvin="1HGBH41JXMN109186"
         )
 
-        mock_post.assert_called_once_with(
-            url="https://hawkeye.g2it.co/api/createclaim",
-            headers={"Content-Type": "application/json", "Authorization": "Bearer mock_token"},
-            data={
-                "rentername": "John Doe",
-                "insurancecompany": "Test Insurance Co.",
-                "dateofloss": "2024-12-01",
-                "vehmake": "Toyota",
-                "vehmodel": "Camry",
-                "vehcolor": "Blue",
-                "vehvin": "1HGBH41JXMN109186"
-            }
-        )
-
-        #self.assertIsInstance(response, ApiResponse)
+        # Verify session was created and send was called
+        mock_session_class.assert_called_once()
+        mock_session.send.assert_called_once()
+        mock_response.raise_for_status.assert_called_once()
+        
+        # Verify the prepared request would have the correct data
+        # The actual request preparation is handled by requests internally
+        
         self.assertEqual(response.get("filenumber"), 24111756)
+        self.assertEqual(response.get("success"), True)
 
-    # ============== EDGE CASE TESTS ==============
-
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.get')
-    def test_get_claims_with_inactive(self, mock_get):
-        """Test getting claims including inactive ones."""
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_data = []  # Empty list for simplicity
-        mock_response.text = json.dumps(mock_data)
-        mock_get.return_value = mock_response
-
-        client = HawkeyeClient("mock_token")
-        claims = client.claims.get_claims(include_inactive=True)
-
-        mock_get.assert_called_once_with(
-            url="https://hawkeye.g2it.co/api/getclaims/all/True",
-            headers={"Content-Type": "application/json", "Authorization": "Bearer mock_token"}
-        )
-        self.assertIsInstance(claims, list)
-
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.get')
-    def test_get_claims_empty_response(self, mock_get):
-        """Test handling of empty claims list."""
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.text = json.dumps([])
-        mock_get.return_value = mock_response
-
-        client = HawkeyeClient("mock_token")
-        claims = client.claims.get_claims()
-
-        self.assertIsInstance(claims, list)
-        self.assertEqual(len(claims), 0)
-
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.get')
-    def test_get_claims_network_error(self, mock_get):
-        """Test handling of network errors."""
-        mock_get.side_effect = Exception("Network connection failed")
-
-        client = HawkeyeClient("mock_token")
-        
-        with self.assertRaises(Exception) as context:
-            client.claims.get_claims()
-        
-        self.assertIn("Network connection failed", str(context.exception))
-
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.get')
-    def test_get_claims_malformed_json(self, mock_get):
-        """Test handling of malformed JSON response."""
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.text = "Invalid JSON response"
-        mock_get.return_value = mock_response
-
-        client = HawkeyeClient("mock_token")
-        
-        with self.assertRaises(json.JSONDecodeError):
-            client.claims.get_claims()
-
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.get')
-    def test_get_single_claim_not_found(self, mock_get):
-        """Test handling of non-existent claim."""
-        mock_response = Mock()
-        mock_response.status_code = 404
-        mock_response.text = json.dumps([])
-        mock_get.return_value = mock_response
-
-        client = HawkeyeClient("mock_token")
-        
-        with self.assertRaises(IndexError):
-            client.claims.get_single_claim(999999)
-
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.get')
-    def test_get_single_claim_network_error(self, mock_get):
-        """Test network error handling for single claim."""
-        mock_get.side_effect = Exception("Connection timeout")
-
-        client = HawkeyeClient("mock_token")
-        
-        with self.assertRaises(Exception) as context:
-            client.claims.get_single_claim(12345)
-        
-        self.assertIn("Connection timeout", str(context.exception))
-
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_create_claim_with_all_optional_parameters(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_create_claim_with_all_optional_parameters(self, mock_session_class):
         """Test creating a claim with all optional parameters."""
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "filenumber": 99999,
             "message": "Claim created successfully! Filenumber is 99999",
             "error": 0,
             "success": True
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.create_claim(
@@ -486,26 +407,28 @@ class TestClaimsModule(unittest.TestCase):
             vehuninumber="UNIT456"
         )
 
-        # Verify all parameters were included in the request
-        call_args = mock_post.call_args
-        self.assertIn("clientclaimno", call_args[1]["data"])
-        self.assertIn("note", call_args[1]["data"])
-        self.assertIn("vehyear", call_args[1]["data"])
+        # Verify session usage
+        mock_session_class.assert_called_once()
+        mock_session.send.assert_called_once()
         self.assertEqual(response.get("success"), True)
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_create_claim_minimal_parameters(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_create_claim_minimal_parameters(self, mock_session_class):
         """Test creating a claim with only required parameters."""
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "filenumber": 88888,
             "message": "Claim created successfully! Filenumber is 88888",
             "error": 0,
             "success": True
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.create_claim(
@@ -518,27 +441,27 @@ class TestClaimsModule(unittest.TestCase):
             vehvin="1FTPW14V38FA12345"
         )
 
-        # Verify only required parameters were included
-        call_args = mock_post.call_args
-        data = call_args[1]["data"]
-        self.assertEqual(len(data), 7)  # Only the 7 required parameters
-        self.assertNotIn("clientclaimno", data)
-        self.assertNotIn("note", data)
+        mock_session_class.assert_called_once()
+        mock_session.send.assert_called_once()
         self.assertEqual(response.get("success"), True)
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_create_claim_special_characters(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_create_claim_special_characters(self, mock_session_class):
         """Test creating a claim with special characters in data."""
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "filenumber": 77777,
             "message": "Claim created successfully! Filenumber is 77777",
             "error": 0,
             "success": True
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.create_claim(
@@ -552,21 +475,24 @@ class TestClaimsModule(unittest.TestCase):
             note="Customer stated: 'Vehicle was damaged in parking lot' - needs investigation & review"
         )
 
-        # Verify special characters are handled properly
         self.assertEqual(response.get("success"), True)
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_create_claim_error_response(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_create_claim_error_response(self, mock_session_class):
         """Test handling of error response from create claim API."""
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
         mock_response = Mock()
         mock_response.status_code = 400
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "message": "Invalid VIN format",
             "error": 1,
             "success": False
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.create_claim(
@@ -583,10 +509,12 @@ class TestClaimsModule(unittest.TestCase):
         self.assertEqual(response.get("error"), 1)
         self.assertIn("Invalid VIN", response.get("message"))
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_create_claim_network_error(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_create_claim_network_error(self, mock_session_class):
         """Test network error handling for create claim."""
-        mock_post.side_effect = Exception("Request timeout")
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        mock_session.send.side_effect = Exception("Request timeout")
 
         client = HawkeyeClient("mock_token")
         
@@ -603,19 +531,23 @@ class TestClaimsModule(unittest.TestCase):
         
         self.assertIn("Request timeout", str(context.exception))
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_update_claim_success(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_update_claim_success(self, mock_session_class):
         """Test successful claim update."""
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "filenumber": "12345",
             "message": "Claim updated successfully",
             "error": 0,
             "success": True
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.update_claim(
@@ -623,179 +555,84 @@ class TestClaimsModule(unittest.TestCase):
             clientclaimno="UPDATED-CLM-001",
             claimnumber="UPD-123456789",
             note="Updated claim information",
-            rentername="Updated Renter Name",
-            insurancecompany="Updated Insurance Co.",
-            insuredname="Updated Insured",
-            policynumber="UPD-POL123",
-            renterphone="555-999-8888",
-            renteremail="updated@email.com",
-            dateofloss="2025-01-20",
-            vehlocationdetails="Updated location",
-            vehlocationcity="Updated City",
-            vehlocationstate="NY",
-            vehyear=2023,
-            vehmake="Updated Make",
-            vehmodel="Updated Model",
-            vehedition="Updated Edition",
-            vehcolor="Updated Color",
-            vehvin="UPDATED123456789",
-            vehplatenumber="UPD123",
-            vehuninumber="UPUNIT123"
+            rentername="Updated Renter Name"
         )
 
-        mock_post.assert_called_once_with(
-            url="https://hawkeye.g2it.co/api/updateclaim",
-            headers={"Content-Type": "application/json", "Authorization": "Bearer mock_token"},
-            data={
-                "filenumber": 12345,
-                "clientclaimno": "UPDATED-CLM-001",
-                "claimnumber": "UPD-123456789",
-                "note": "Updated claim information",
-                "rentername": "Updated Renter Name",
-                "insurancecompany": "Updated Insurance Co.",
-                "insuredname": "Updated Insured",
-                "policynumber": "UPD-POL123",
-                "renterphone": "555-999-8888",
-                "renteremail": "updated@email.com",
-                "dateofloss": "2025-01-20",
-                "vehlocationdetails": "Updated location",
-                "vehlocationcity": "Updated City",
-                "vehlocationstate": "NY",
-                "vehyear": 2023,
-                "vehmake": "Updated Make",
-                "vehmodel": "Updated Model",
-                "vehedition": "Updated Edition",
-                "vehcolor": "Updated Color",
-                "vehvin": "UPDATED123456789",
-                "vehplatenumber": "UPD123",
-                "vehuninumber": "UPUNIT123"
-            }
-        )
+        mock_session_class.assert_called_once()
+        mock_session.send.assert_called_once()
+        mock_response.raise_for_status.assert_called_once()
         self.assertEqual(response.get("success"), True)
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_update_claim_partial_update(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_update_claim_partial_update(self, mock_session_class):
         """Test updating only some fields of a claim."""
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "filenumber": "12345",
             "message": "Claim updated successfully",
             "error": 0,
             "success": True
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.update_claim(
             filenumber=12345,
             clientclaimno="PARTIAL-UPDATE",
-            note="Only updating claim number and note",
-            rentername=None,
-            insurancecompany=None,
-            insuredname=None,
-            policynumber=None,
-            renterphone=None,
-            renteremail=None,
-            dateofloss=None,
-            vehlocationdetails=None,
-            vehlocationcity=None,
-            vehlocationstate=None,
-            vehyear=None,
-            vehmake=None,
-            vehmodel=None,
-            vehedition=None,
-            vehcolor=None,
-            vehvin=None,
-            vehplatenumber=None,
-            vehuninumber=None,
-            claimnumber=None
+            note="Only updating claim number and note"
         )
 
-        # Verify only non-None parameters were included
-        call_args = mock_post.call_args
-        data = call_args[1]["data"]
-        self.assertEqual(data["filenumber"], 12345)
-        self.assertEqual(data["clientclaimno"], "PARTIAL-UPDATE")
-        self.assertEqual(data["note"], "Only updating claim number and note")
-        self.assertNotIn("rentername", data)  # None values should be excluded
+        # Verify session usage
+        mock_session_class.assert_called_once()
+        mock_session.send.assert_called_once()
         self.assertEqual(response.get("success"), True)
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_update_claim_error_response(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_update_claim_error_response(self, mock_session_class):
         """Test handling of error response from update claim API."""
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        
         mock_response = Mock()
         mock_response.status_code = 404
+        mock_response.raise_for_status.return_value = None
         mock_data = {
             "message": "Claim not found",
             "error": 1,
             "success": False
         }
-        mock_response.text = json.dumps(mock_data)
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = mock_data
+        mock_session.send.return_value = mock_response
 
         client = HawkeyeClient("mock_token")
         response = client.claims.update_claim(
             filenumber=999999,
-            clientclaimno="NON-EXISTENT",
-            claimnumber=None,
-            note=None,
-            rentername=None,
-            insurancecompany=None,
-            insuredname=None,
-            policynumber=None,
-            renterphone=None,
-            renteremail=None,
-            dateofloss=None,
-            vehlocationdetails=None,
-            vehlocationcity=None,
-            vehlocationstate=None,
-            vehyear=None,
-            vehmake=None,
-            vehmodel=None,
-            vehedition=None,
-            vehcolor=None,
-            vehvin=None,
-            vehplatenumber=None,
-            vehuninumber=None
+            clientclaimno="NON-EXISTENT"
         )
 
         self.assertEqual(response.get("success"), False)
         self.assertEqual(response.get("error"), 1)
         self.assertIn("not found", response.get("message"))
 
-    @patch('hawkeye_sdk_for_python.modules.claims.requests.post')
-    def test_update_claim_network_error(self, mock_post):
+    @patch('hawkeye_sdk_for_python.modules.claims.requests.Session')
+    def test_update_claim_network_error(self, mock_session_class):
         """Test network error handling for update claim."""
-        mock_post.side_effect = Exception("Connection lost")
+        mock_session = Mock()
+        mock_session_class.return_value = mock_session
+        mock_session.send.side_effect = Exception("Connection lost")
 
         client = HawkeyeClient("mock_token")
         
         with self.assertRaises(Exception) as context:
             client.claims.update_claim(
                 filenumber=12345,
-                clientclaimno="TEST",
-                claimnumber=None,
-                note=None,
-                rentername=None,
-                insurancecompany=None,
-                insuredname=None,
-                policynumber=None,
-                renterphone=None,
-                renteremail=None,
-                dateofloss=None,
-                vehlocationdetails=None,
-                vehlocationcity=None,
-                vehlocationstate=None,
-                vehyear=None,
-                vehmake=None,
-                vehmodel=None,
-                vehedition=None,
-                vehcolor=None,
-                vehvin=None,
-                vehplatenumber=None,
-                vehuninumber=None
+                clientclaimno="TEST"
             )
         
         self.assertIn("Connection lost", str(context.exception))

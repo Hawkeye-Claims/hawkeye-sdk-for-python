@@ -9,11 +9,12 @@ class ClaimsModule:
         self.client = client
 
     def get_claims(self, include_inactive: bool = False) -> list[Claim]:
-        query = requests.get(
+        response = requests.get(
             url=f"{self.client.base_url}/getclaims/all/{include_inactive}",
             headers=self.client.headers
         )
-        portal_json = json.loads(query.text)
+        response.raise_for_status()
+        portal_json = response.json()
         claim_list = []
         for file in portal_json:
             claim = type_claim(file)
@@ -21,11 +22,12 @@ class ClaimsModule:
         return claim_list
     
     def get_single_claim(self, filenumber: int) -> Claim:
-        query = requests.get(
+        response = requests.get(
             url=f"{self.client.base_url}/getclaims/{filenumber}",
             headers=self.client.headers
         )
-        portal_json = json.loads(query.text)[0]
+        response.raise_for_status()
+        portal_json = response.json()[0]
         return type_claim(portal_json)
     
     def create_claim(
@@ -51,48 +53,62 @@ class ClaimsModule:
             vehedition: Optional[str]=None,
             vehplatenumber: Optional[str]=None,
             vehuninumber: Optional[str]=None
-    ) -> ApiResponse :
+    ) -> ApiResponse:
         all_args = locals()
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
-        response = requests.post(
+        
+        session = requests.Session()
+        req = requests.Request(
+            method="POST",
             url=f"{self.client.base_url}/createclaim",
             headers=self.client.headers,
-            data=data
+            json=data
         )
-        response_json: ApiResponse = json.loads(response.text)
+        prepared = req.prepare()
+        
+        response = session.send(prepared)
+        response.raise_for_status()
+        response_json: ApiResponse = response.json()
         return response_json
     
     def update_claim(
             self,
             filenumber: int,
-            clientclaimno: Optional[str],
-            claimnumber: Optional[str],
-            note: Optional[str],
-            rentername: Optional[str],
-            insurancecompany: Optional[str],
-            insuredname: Optional[str],
-            policynumber: Optional[str],
-            renterphone: Optional[str],
-            renteremail: Optional[str],
-            dateofloss: Optional[str],
-            vehlocationdetails: Optional[str],
-            vehlocationcity: Optional[str],
-            vehlocationstate: Optional[str],
-            vehyear: Optional[int],
-            vehmake: Optional[str],
-            vehmodel: Optional[str],
-            vehedition: Optional[str],
-            vehcolor: Optional[str],
-            vehvin: Optional[str],
-            vehplatenumber: Optional[str],
-            vehuninumber: Optional[str]
+            clientclaimno: Optional[str]=None,
+            claimnumber: Optional[str]=None,
+            note: Optional[str]=None,
+            rentername: Optional[str]=None,
+            insurancecompany: Optional[str]=None,
+            insuredname: Optional[str]=None,
+            policynumber: Optional[str]=None,
+            renterphone: Optional[str]=None,
+            renteremail: Optional[str]=None,
+            dateofloss: Optional[str]=None,
+            vehlocationdetails: Optional[str]=None,
+            vehlocationcity: Optional[str]=None,
+            vehlocationstate: Optional[str]=None,
+            vehyear: Optional[int]=None,
+            vehmake: Optional[str]=None,
+            vehmodel: Optional[str]=None,
+            vehedition: Optional[str]=None,
+            vehcolor: Optional[str]=None,
+            vehvin: Optional[str]=None,
+            vehplatenumber: Optional[str]=None,
+            vehuninumber: Optional[str]=None
     ) -> ApiResponse:
         all_args = locals()
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
-        response = requests.post(
+        
+        session = requests.Session()
+        req = requests.Request(
+            method="POST",
             url=f"{self.client.base_url}/updateclaim",
             headers=self.client.headers,
-            data=data
+            json=data
         )
-        response_json: ApiResponse = json.loads(response.text)
+        prepared = req.prepare()
+        
+        response = session.send(prepared)
+        response.raise_for_status()
+        response_json: ApiResponse = response.json()
         return response_json
