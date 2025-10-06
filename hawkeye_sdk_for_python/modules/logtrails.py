@@ -1,12 +1,13 @@
-from typing import Optional
-from ..types import ClientSettings, ApiResponse
+import httpx
+
+from .base import BaseModule
+from ..types import ApiResponse
 from datetime import datetime
-import requests
 import json
 
-class LogtrailsModule:
-    def __init__(self, client: ClientSettings):
-        self.client = client
+class LogtrailsModule(BaseModule):
+    def __init__(self, client: httpx.Client):
+        self._client = client
 
     def create_log_trail(
             self, 
@@ -14,14 +15,14 @@ class LogtrailsModule:
             activity: str,
             date: str = datetime.now().strftime("%m/%d/%Y")
             ) -> ApiResponse:
-        response = requests.post(
-            url=f"{self.client.base_url}/createLogTrailEntry",
-            headers=self.client.headers,
-            json={
-                "filenumber": file_number,
-                "date": date,
-                "activity": activity
-            }
-        )
+        response = self._client.post(
+                url="/createLogTrailEntry",
+                json={
+                    "filenumber": file_number,
+                    "activity": activity,
+                    "date": date
+                    }
+                )
+        self._check_response(response)
         response_json: ApiResponse = json.loads(response.text)
         return response_json 

@@ -1,34 +1,35 @@
 from typing import Optional
-from ..types import Claim, ClientSettings, ApiResponse
+import httpx
+from ..types import Claim, ApiResponse
 from ..utils import type_claim
-import requests
-import json
+from .base import BaseModule
 
-class ClaimsModule:
-    def __init__(self, client: ClientSettings):
-        self.client = client
-
+class ClaimsModule(BaseModule):
     def get_claims(self, include_inactive: bool = False) -> list[Claim]:
-        response = requests.get(
-            url=f"{self.client.base_url}/getclaims/all/{include_inactive}",
-            headers=self.client.headers
-        )
-        response.raise_for_status()
+        response = self._client.get(
+                url=f"/getclaims/all/{str(include_inactive).lower()}",
+                )
+        
         portal_json = response.json()
-        claim_list = []
-        for file in portal_json:
-            claim = type_claim(file)
-            claim_list.append(claim)
+
+        self._check_response(response)
+
+        claim_list = [type_claim(claim) for claim in portal_json]
+
         return claim_list
     
     def get_single_claim(self, filenumber: int) -> Claim:
-        response = requests.get(
-            url=f"{self.client.base_url}/getclaims/{filenumber}",
-            headers=self.client.headers
-        )
-        response.raise_for_status()
-        portal_json = response.json()[0]
-        return type_claim(portal_json)
+        response = self._client.get(
+                url=f"/getclaims/{filenumber}",
+                )
+        portal_json = response.json()
+
+        self._check_response(response)
+
+        if not portal_json:
+            raise ValueError(f"Claim with filenumber {filenumber} not found.")
+
+        return type_claim(portal_json[0])
     
     def create_claim(
             self,
@@ -57,17 +58,13 @@ class ClaimsModule:
         all_args = locals()
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
         
-        session = requests.Session()
-        req = requests.Request(
-            method="POST",
-            url=f"{self.client.base_url}/createclaim",
-            headers=self.client.headers,
-            json=data
-        )
-        prepared = req.prepare()
-        
-        response = session.send(prepared)
-        response.raise_for_status()
+        response = self._client.post(
+                url="/create_claim",
+                json=data
+                )
+
+        self._check_response(response)
+
         response_json: ApiResponse = response.json()
         return response_json
     
@@ -99,16 +96,12 @@ class ClaimsModule:
         all_args = locals()
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
         
-        session = requests.Session()
-        req = requests.Request(
-            method="POST",
-            url=f"{self.client.base_url}/updateclaim",
-            headers=self.client.headers,
-            json=data
-        )
-        prepared = req.prepare()
-        
-        response = session.send(prepared)
-        response.raise_for_status()
+        response = self._client.post(
+                url="/update_claim",
+                json=data
+               )
+
+        self._check_response(response)
+
         response_json: ApiResponse = response.json()
         return response_json

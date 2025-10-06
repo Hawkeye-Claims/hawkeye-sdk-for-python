@@ -1,9 +1,11 @@
-from ..types import ClientSettings, DocType
-import requests
+import httpx
 
-class DocfilesModule:
-    def __init__(self, client: ClientSettings):
-        self.client = client
+from .base import BaseModule
+from ..types import DocType
+
+class DocfilesModule(BaseModule):
+    def __init__(self, client: httpx.Client):
+        self._client = client
 
     def upload_file(
             self,
@@ -13,15 +15,18 @@ class DocfilesModule:
             visibleToClient: bool = False,
             notes: str = ""
             ):
-        requests.post(
-            url=f"{self.client.base_url}/savefile",
-            headers=self.client.headers,
-            json = {
-                "filenumber": filenumber,
-                "link": fileurl,
-                "category": category.value,
-                "visibleToClient": visibleToClient,
-                "notes": notes
-            }
-        )
+        response = self._client.post(
+                url="/savefile",
+                json={
+                    "filenumber": filenumber,
+                    "link": fileurl,
+                    "category": category.value,
+                    "visibleToClient": visibleToClient,
+                    "notes": notes
+                    }
+                )
+
+        self._check_response(response)
+
+
         return

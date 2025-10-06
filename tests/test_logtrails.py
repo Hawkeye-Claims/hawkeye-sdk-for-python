@@ -14,12 +14,13 @@ class TestLogtrailsModule(unittest.TestCase):
         self.test_filenumber = 12345
         self.test_activity = "Test activity for claim processing"
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_with_defaults(self, mock_post):
         """Test creating a log trail entry with default date."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -39,8 +40,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": current_date,
@@ -54,12 +54,13 @@ class TestLogtrailsModule(unittest.TestCase):
         self.assertEqual(result["error"], 0)
         self.assertEqual(result.get("filenumber"), str(self.test_filenumber))
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_with_custom_date(self, mock_post):
         """Test creating a log trail entry with a custom date."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -80,8 +81,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": custom_date,
@@ -94,12 +94,13 @@ class TestLogtrailsModule(unittest.TestCase):
         self.assertTrue(result["success"])
         self.assertEqual(result["error"], 0)
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_claim_created(self, mock_post):
         """Test creating a log trail entry for claim creation."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -117,8 +118,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": "09/10/2025",
@@ -126,12 +126,13 @@ class TestLogtrailsModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_insurance_contact(self, mock_post):
         """Test creating a log trail entry for insurance company contact."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -149,8 +150,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": "09/09/2025",
@@ -158,12 +158,13 @@ class TestLogtrailsModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_document_received(self, mock_post):
         """Test creating a log trail entry for document receipt."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -181,8 +182,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": "09/08/2025",
@@ -190,12 +190,13 @@ class TestLogtrailsModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_settlement_update(self, mock_post):
         """Test creating a log trail entry for settlement updates."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -213,8 +214,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": "09/07/2025",
@@ -222,12 +222,13 @@ class TestLogtrailsModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_claim_closed(self, mock_post):
         """Test creating a log trail entry for claim closure."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -245,8 +246,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": "09/06/2025",
@@ -254,12 +254,13 @@ class TestLogtrailsModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_long_activity(self, mock_post):
         """Test creating a log trail entry with a long activity description."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -282,8 +283,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": "09/05/2025",
@@ -291,12 +291,13 @@ class TestLogtrailsModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_error_response(self, mock_post):
         """Test handling of error response from API."""
         # Setup mock response with error
         mock_response = Mock()
         mock_response.status_code = 400
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Invalid file number",
             "success": False,
@@ -315,7 +316,7 @@ class TestLogtrailsModule(unittest.TestCase):
         self.assertFalse(result["success"])
         self.assertEqual(result["error"], 1)
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_network_error(self, mock_post):
         """Test handling of network errors during log trail creation."""
         # Setup mock to raise an exception
@@ -330,12 +331,13 @@ class TestLogtrailsModule(unittest.TestCase):
 
         self.assertIn("Network connection failed", str(context.exception))
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_malformed_json_response(self, mock_post):
         """Test handling of malformed JSON response."""
         # Setup mock response with invalid JSON
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = "Invalid JSON response"
         mock_post.return_value = mock_response
 
@@ -354,12 +356,13 @@ class TestLogtrailsModule(unittest.TestCase):
         # Verify format matches MM/DD/YYYY pattern
         self.assertRegex(expected_format, r'^\d{1,2}/\d{1,2}/\d{4}$')
 
-    @patch('hawkeye_sdk_for_python.modules.logtrails.requests.post')
+    @patch('httpx.Client.post')
     def test_create_log_trail_special_characters(self, mock_post):
         """Test creating log trail with special characters in activity."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Log entry created successfully",
             "success": True,
@@ -380,8 +383,7 @@ class TestLogtrailsModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/createLogTrailEntry",
-            headers=self.client.settings.headers,
+            url="/createLogTrailEntry",
             json={
                 "filenumber": self.test_filenumber,
                 "date": "09/04/2025",
