@@ -12,17 +12,17 @@ class ApiResponse(TypedDict):
 
 @dataclass
 class DocFile:
-    doctype: Optional[DocType] = None
-    dateadded: Optional[str] = None
-    user: Optional[str] = None
-    notes: Optional[str] = None
-    filename: Optional[str] = None
+    doctype: DocType = DocType.DEFAULT
+    dateadded:str = ""
+    user: str = ""
+    notes: str = ""
+    filename: str = ""
 
 @dataclass
 class LogTrail:
-    date: Optional[str] = None
-    activity: Optional[str] = None
-    user: Optional[str] = None
+    date: str = ""
+    activity: str = ""
+    user: str = ""
 
 @dataclass
 class Claim:
