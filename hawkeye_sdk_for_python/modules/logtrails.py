@@ -13,8 +13,10 @@ class LogtrailsModule(BaseModule):
             self, 
             file_number: int,
             activity: str,
-            date: str = datetime.now().strftime("%m/%d/%Y")
+            date: str = "" 
             ) -> ApiResponse:
+        if date == "":
+            date = datetime.now().strftime("%m/%d/%Y")
         response = self._client.post(
                 url="/createLogTrailEntry",
                 json={
