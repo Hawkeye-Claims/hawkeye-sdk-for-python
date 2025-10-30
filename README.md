@@ -45,7 +45,7 @@ claim = client.claims.get_single_claim(filenumber=12345)
 # Create a new claim
 response = client.claims.create_claim(
     rentername="John Doe",
-    insurancecompany="ABC Insurance",
+    inscompaniesid="ABC Insurance",
     dateofloss="2024-01-15",
     vehmake="Toyota",
     vehmodel="Camry",
