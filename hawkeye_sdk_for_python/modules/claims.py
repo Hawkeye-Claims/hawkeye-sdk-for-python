@@ -33,7 +33,7 @@ class ClaimsModule:
     def create_claim(
             self,
             rentername: str,
-            insurancecompany: str,
+            inscompaniesid: str,
             dateofloss: str,
             vehmake: str,
             vehmodel: str,
@@ -78,7 +78,7 @@ class ClaimsModule:
             claimnumber: Optional[str]=None,
             note: Optional[str]=None,
             rentername: Optional[str]=None,
-            insurancecompany: Optional[str]=None,
+            inscompaniesid: Optional[str]=None,
             insuredname: Optional[str]=None,
             policynumber: Optional[str]=None,
             renterphone: Optional[str]=None,
