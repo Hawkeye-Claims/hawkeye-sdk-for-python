@@ -58,7 +58,7 @@ class ClaimsModule(BaseModule):
         data = {key: value for key, value in all_args.items() if value is not None and key != "self"}
         
         response = self._client.post(
-                url="/create_claim",
+                url="/createclaim",
                 json=data
                 )
 
