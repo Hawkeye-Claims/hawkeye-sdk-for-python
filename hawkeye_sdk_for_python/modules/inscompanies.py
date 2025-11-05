@@ -26,9 +26,8 @@ class InsCompaniesModule(BaseModule):
         
         response = self._client.get(url, params=params)
         
-        portal_json = response.json()
-
         self._check_response(response)
+        portal_json = response.json()
 
         ins_companies = [InsCompany(**item) for item in portal_json.get("suggestions", portal_json.get("data", []))]
 
