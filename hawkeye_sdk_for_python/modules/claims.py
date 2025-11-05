@@ -1,5 +1,4 @@
 from typing import Optional
-import httpx
 from ..types import Claim, ApiResponse
 from ..utils import type_claim
 from .base import BaseModule

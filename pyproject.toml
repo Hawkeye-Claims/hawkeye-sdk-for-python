@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hawkeye-sdk-for-python"
-version = "1.0.4"
+version = "1.0.7"
 authors = [
     { name="Kevin Lopes", email="it@hawkeyeclaims.com" },
 ]

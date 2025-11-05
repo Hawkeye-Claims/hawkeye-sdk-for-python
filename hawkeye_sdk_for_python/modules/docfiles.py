@@ -1,12 +1,7 @@
-import httpx
-
 from .base import BaseModule
 from ..types import DocType
 
 class DocfilesModule(BaseModule):
-    def __init__(self, client: httpx.Client):
-        self._client = client
-
     def upload_file(
             self,
             filenumber: int,
