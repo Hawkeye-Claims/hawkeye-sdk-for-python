@@ -122,7 +122,7 @@ class TestInsCompaniesModule(unittest.TestCase):
         mock_get.return_value = mock_response
 
         # Call the method with limit > 20
-        companies = self.client.inscompanies.get_insurance_companies(
+        self.client.inscompanies.get_insurance_companies(
             query="insurance",
             limit=50
         )
