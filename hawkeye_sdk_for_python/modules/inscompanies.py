@@ -19,10 +19,12 @@ class InsCompaniesModule(BaseModule):
         
         url = "/inscompanies"
         
+        params = {}
         if query:
-            url += f"?q={query}&limit={limit}"
+            params["q"] = query
+            params["limit"] = limit
         
-        response = self._client.get(url)
+        response = self._client.get(url, params=params)
         
         portal_json = response.json()
 
