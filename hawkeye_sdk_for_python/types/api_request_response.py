@@ -25,6 +25,12 @@ class LogTrail:
     user: str = ""
 
 @dataclass
+class InsCompany:
+    id: int
+    name: str
+    probability: Optional[int] = None
+
+@dataclass
 class Claim:
     filenumber: Optional[int] = None
     customername: Optional[str] = None

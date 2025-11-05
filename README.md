@@ -5,6 +5,7 @@ A Python SDK for interacting with the Hawkeye Claims Management API. This SDK pr
 ## Features
 
 - **Claims Management**: Create, retrieve, and update insurance claims
+- **Insurance Companies**: Search and retrieve insurance company information with fuzzy matching
 - **Document Management**: Upload and manage claim-related documents
 - **Log Trails**: Create activity logs for claims
 - **Type Safety**: Full type hints and dataclass support
@@ -129,6 +130,30 @@ response = client.claims.update_claim(
 )
 ```
 
+### Insurance Companies Module
+
+#### Search Insurance Companies
+
+```python
+# Get all insurance companies
+companies = client.inscompanies.get_insurance_companies()
+
+# Search with fuzzy matching
+companies = client.inscompanies.get_insurance_companies(query="state farm")
+
+# Search with custom limit
+companies = client.inscompanies.get_insurance_companies(query="progressive", limit=10)
+```
+
+**Parameters:**
+- `query` (str, optional): Search query to filter insurance companies. Uses fuzzy matching with probability scores.
+- `limit` (int, optional): Maximum number of results to return. Default is 5, maximum is 20.
+
+**Returns:**
+- List of [`InsCompany`](hawkeye_sdk_for_python/types/api_request_response.py) objects
+
+**Note:** When a search query is provided, results include a `probability` score (0-100) indicating match confidence. Results are ordered by probability from highest to lowest.
+
 ### Document Files Module
 
 #### Upload File
@@ -175,6 +200,13 @@ The [`Claim`](hawkeye_sdk_for_python/types/api_request_response.py) dataclass co
 - Vehicle information (make, model, VIN, year)
 - Financial data (estimate amount, settlement amounts)
 - Associated documents and log trails
+
+### InsCompany
+
+The [`InsCompany`](hawkeye_sdk_for_python/types/api_request_response.py) dataclass represents insurance company information:
+- `id` (int): Unique identifier for the insurance company
+- `name` (str): Full name of the insurance company
+- `probability` (int, optional): Match confidence score (0-100) when returned from search queries
 
 ### DocFile
 

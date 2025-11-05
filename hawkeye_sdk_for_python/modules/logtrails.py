@@ -10,6 +10,15 @@ class LogtrailsModule(BaseModule):
             activity: str,
             date: str = "" 
             ) -> ApiResponse:
+        """
+        Creates a status entry for a specific file number with the given activity and date.
+        Args:
+            file_number (int): The file number to associate the log trail entry with.
+            activity (str): The activity description for the log trail entry.
+            date (str, optional): The date of the activity in MM/DD/YYYY format. Defaults to the current date if not provided.
+        Returns:
+            ApiResponse: The API response indicating the success or failure of the operation.
+        """
         if date == "":
             date = datetime.now().strftime("%m/%d/%Y")
         response = self._client.post(

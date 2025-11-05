@@ -7,6 +7,7 @@ class BaseModule:
         self._client = client
 
     def _check_response(self, response: httpx.Response):
+        """Checks the HTTP response for errors and raises appropriate exceptions."""
         if response.is_error:
             try:
                 error_details = response.json()
