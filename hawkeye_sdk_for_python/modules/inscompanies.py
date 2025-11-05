@@ -4,7 +4,7 @@ from .base import BaseModule
 class InsCompaniesModule(BaseModule):
     def get_insurance_companies(self, query: str = "", limit: int = 5) -> list[InsCompany]:
         """
-         Retrieves a list of insurance companies. When no search query is provided, returns all companies.
+        Retrieves a list of insurance companies. When no search query is provided, returns all companies.
          When a search query is provided, returns intelligent suggestions with probability scores on fuzzy matching.
          Args:
              query (str): The search query to filter insurance companies by name. If omitted, returns all companies.
