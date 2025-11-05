@@ -15,6 +15,7 @@ class DocType(Enum):
     CHECK_IN_VIDEO = "Check-in Video (Drop-off)"
     CHECK_OUT_VIDEO = "Check-out Video (Pick up)"
     CLAIM_STATUS_REPORT = "Claim Status Report"
+    CLAIM_DETAILS_REPORT = "Claim Details Report"
     CONDITION_REPORT = "Condition Report"
     DAMAGE_ASSESSMENT = "Damage Assessment"
     DEDUCTIBLE_REQUEST_FINAL_NOTICE = "Deductible Request Final Notice"
