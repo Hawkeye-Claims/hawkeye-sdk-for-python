@@ -1,4 +1,5 @@
 import httpx
+import json
 from ..exceptions import APIError, APIResourceNotFoundError
 
 class BaseModule:
@@ -9,7 +10,7 @@ class BaseModule:
         if response.is_error:
             try:
                 error_details = response.json()
-            except httpx.ReadError:
+            except json.JSONDecodeError:
                 error_details = {"message": "No response body provided."}
 
             if response.status_code == 404:
