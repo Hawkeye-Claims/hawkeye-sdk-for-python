@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hawkeye-sdk-for-python"
-version = "1.0.6"
+version = "1.0.7"
 authors = [
     { name="Kevin Lopes", email="it@hawkeyeclaims.com" },
 ]
@@ -12,8 +12,8 @@ description = "A Python SDK for interacting with the Hawkeye Claims Management A
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "httpx>=0.28.1",
     "pytest>=8.4.1",
-    "requests>=2.32.4",
 ]
 
 [tool.pyright]

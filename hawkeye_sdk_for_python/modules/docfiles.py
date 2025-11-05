@@ -1,10 +1,7 @@
-from ..types import ClientSettings, DocType
-import requests
+from .base import BaseModule
+from ..types import DocType
 
-class DocfilesModule:
-    def __init__(self, client: ClientSettings):
-        self.client = client
-
+class DocfilesModule(BaseModule):
     def upload_file(
             self,
             filenumber: int,
@@ -13,15 +10,18 @@ class DocfilesModule:
             visibleToClient: bool = False,
             notes: str = ""
             ):
-        requests.post(
-            url=f"{self.client.base_url}/savefile",
-            headers=self.client.headers,
-            json = {
-                "filenumber": filenumber,
-                "link": fileurl,
-                "category": category.value,
-                "visibleToClient": visibleToClient,
-                "notes": notes
-            }
-        )
+        response = self._client.post(
+                url="/savefile",
+                json={
+                    "filenumber": filenumber,
+                    "link": fileurl,
+                    "category": category.value,
+                    "visibleToClient": visibleToClient,
+                    "notes": notes
+                    }
+                )
+
+        self._check_response(response)
+
+
         return

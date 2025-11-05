@@ -14,12 +14,13 @@ class TestDocfilesModule(unittest.TestCase):
         self.test_filenumber = 12345
         self.test_fileurl = "https://example.com/test-document.pdf"
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_with_defaults(self, mock_post):
         """Test uploading a file with default parameters."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "File uploaded successfully",
             "success": True,
@@ -33,10 +34,8 @@ class TestDocfilesModule(unittest.TestCase):
             fileurl=self.test_fileurl
         )
 
-        # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/savefile",
-            headers=self.client.settings.headers,
+            url="/savefile",
             json={
                 "filenumber": self.test_filenumber,
                 "link": self.test_fileurl,
@@ -46,12 +45,13 @@ class TestDocfilesModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_with_all_parameters(self, mock_post):
         """Test uploading a file with all parameters specified."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "File uploaded successfully",
             "success": True,
@@ -75,8 +75,7 @@ class TestDocfilesModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/savefile",
-            headers=self.client.settings.headers,
+            url="/savefile",
             json={
                 "filenumber": self.test_filenumber,
                 "link": self.test_fileurl,
@@ -86,12 +85,13 @@ class TestDocfilesModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_rental_agreement(self, mock_post):
         """Test uploading a rental agreement document."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Rental agreement uploaded successfully",
             "success": True,
@@ -110,8 +110,7 @@ class TestDocfilesModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/savefile",
-            headers=self.client.settings.headers,
+            url="/savefile",
             json={
                 "filenumber": self.test_filenumber,
                 "link": "https://example.com/rental-agreement.pdf",
@@ -121,12 +120,13 @@ class TestDocfilesModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_police_report(self, mock_post):
         """Test uploading a police report document."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Police report uploaded successfully",
             "success": True,
@@ -145,8 +145,7 @@ class TestDocfilesModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/savefile",
-            headers=self.client.settings.headers,
+            url="/savefile",
             json={
                 "filenumber": self.test_filenumber,
                 "link": "https://example.com/police-report.pdf",
@@ -156,12 +155,13 @@ class TestDocfilesModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_images(self, mock_post):
         """Test uploading images/photos."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Images uploaded successfully",
             "success": True,
@@ -180,8 +180,7 @@ class TestDocfilesModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/savefile",
-            headers=self.client.settings.headers,
+            url="/savefile",
             json={
                 "filenumber": self.test_filenumber,
                 "link": "https://example.com/damage-photos.zip",
@@ -191,12 +190,13 @@ class TestDocfilesModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_invoice(self, mock_post):
         """Test uploading an invoice document."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "Invoice uploaded successfully",
             "success": True,
@@ -215,8 +215,7 @@ class TestDocfilesModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/savefile",
-            headers=self.client.settings.headers,
+            url="/savefile",
             json={
                 "filenumber": self.test_filenumber,
                 "link": "https://example.com/repair-invoice.pdf",
@@ -226,12 +225,13 @@ class TestDocfilesModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_with_empty_notes(self, mock_post):
         """Test uploading a file with empty notes."""
         # Setup mock response
         mock_response = Mock()
         mock_response.status_code = 200
+        mock_response.is_error = False
         mock_response.text = json.dumps({
             "message": "File uploaded successfully",
             "success": True,
@@ -250,8 +250,7 @@ class TestDocfilesModule(unittest.TestCase):
 
         # Verify the request
         mock_post.assert_called_once_with(
-            url=f"{self.client.settings.base_url}/savefile",
-            headers=self.client.settings.headers,
+            url="/savefile",
             json={
                 "filenumber": self.test_filenumber,
                 "link": self.test_fileurl,
@@ -261,7 +260,7 @@ class TestDocfilesModule(unittest.TestCase):
             }
         )
 
-    @patch('hawkeye_sdk_for_python.modules.docfiles.requests.post')
+    @patch('httpx.Client.post')
     def test_upload_file_network_error(self, mock_post):
         """Test handling of network errors during file upload."""
         # Setup mock to raise an exception
