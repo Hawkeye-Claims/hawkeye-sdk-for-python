@@ -1,11 +1,17 @@
 import httpx
 from .types import ClientSettings
 from .constants import BASE_URL, DEV_BASE_URL
-from .modules import ClaimsModule, DocfilesModule, LogtrailsModule
+from .modules import ClaimsModule, DocfilesModule, LogtrailsModule, InsCompaniesModule
 
 
 class HawkeyeClient:
     def __init__(self, auth_token: str, debug_mode: bool = False):
+        """
+        Initializes the Hawkeye API client with the provided authentication token and debug mode setting.
+        Args:
+            auth_token (str): The authentication token for API access.
+            debug_mode (bool, optional): If True, uses the development environment. Defaults to False.
+        """
         base_url = DEV_BASE_URL if debug_mode else BASE_URL
         headers = {
                 "Content-Type": "application/json",
@@ -25,6 +31,7 @@ class HawkeyeClient:
         self.claims = ClaimsModule(self._http_client)
         self.docfiles = DocfilesModule(self._http_client)
         self.logtrails = LogtrailsModule(self._http_client)
+        self.inscompanies = InsCompaniesModule(self._http_client)
 
         def __enter__(self):
             return self

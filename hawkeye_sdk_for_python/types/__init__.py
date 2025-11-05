@@ -3,6 +3,7 @@ from .api_request_response import (
     LogTrail,
     Claim,
     ApiResponse,
+    InsCompany,
 )
 from .client_settings import ClientSettings
 from .hc_enums import DocType
